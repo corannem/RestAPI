@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RestFul Example</title>
+
+</head>
+<body>
+	<div>
+		<h1>Another Web service Example using RestFul</h1>
+		<form>
+			First Name <input id="FirstName_id" type="text"><br>
+			Last Name <input id="LastName_id" type="text"><br>
+			<br/>
+			<button id="PostBtn" type="button" onclick="PostBtnFunction (); return false;" > Post Request to Server</button> 
+			<button id="GetBtn" type="button" onclick="GetBtnFunction (); return false;" >Get Request to Server</button>
+			<br/> 
+			<p id="MessageLabel_id"> Response Message - </p>
+			<br/>
+		</form>
+	</div>
+	
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script type = 'text/javascript'>
+	
+
+	function PostBtnFunction () {
+		
+		// Get Elements by ID store in local temp. var if not populated can cause nulls in the jsondata
+		var LocDate = new Date().toLocaleString ();  // Added date to make call unique to prevent broswe cache load 
+		var LocFirstName = document.getElementById("FirstName_id").value;
+		var LocLastName = document.getElementById("LastName_id").value;
+		
+		// Build json repsentation of data to sent in post, note call to JOSN.stringify 
+		// need to convert string to json before sending...
+		
+		var jsonData = JSON.stringify ({ Myid: LocDate,
+				                        FirstName: LocFirstName,
+				                        LastName: LocLastName
+		});
+		
+		$.ajax({
+			url:"/RestFulExample6/create",
+			method:"POST",
+			contentType: "application/json",
+			dataType: "json",
+			data: jsonData,
+			success: OnSuccessPostBtn,
+			error: OnErrorPostBtn,
+			failure: OnFailurePostBtn
+		});
+	}
+    // call backs specific to web service call in PostBtnFunction function
+	function OnSuccessPostBtn (response){
+		if(response.code == "success"){
+			//alert("Success! Welcome " + response.message);
+			
+			document.getElementById("MessageLabel_id").innerHTML  = "Post Call Success! Welcome " + response.message;
+		}else 
+			if(response.code == "error"){
+				
+			   alert("Post Error! Message was " + response.errmessage);
+		    }
+	}
+	
+	function OnErrorPostBtn (response){
+		
+		alert(response.responseText);
+	}	
+	
+	function OnFailurePostBtn (response){
+		alert("Failure from (Post) Web Service. - message " + response.errmessage);
+	}	
+	// End of Post Call Back functions
+	
+
+	// Get Request function call
+	function GetBtnFunction () {
+				
+		$.ajax({
+			url:"/RestFulExample6/createsample",
+			method:"GET",
+			dataType: "json",
+			success: OnSuccessGetBtn,
+			error: OnErrorGetBtn,
+			failure: OnFailureGetBtn
+		});
+	}
+    // call backs specific to web service call in GetBtnFunction function
+	function OnSuccessGetBtn (response){
+		if(response.code == "success"){
+			//alert("Success! Welcome " + response.message);
+			
+			document.getElementById("MessageLabel_id").innerHTML  = "Get Call Success! Welcome " + response.message;
+		}else 
+			if(response.code == "error"){
+				
+			   alert("Get Error! Message was " + response.errmessage);
+		    }
+	}
+	
+	function OnErrorGetBtn (response){
+		
+		alert(response.responseText);
+	}	
+	
+	function OnFailureGetBtn (response){
+		alert("Failure from (Get) Web Service. - message " + response.errmessage);
+	}	
+	// End of Post Call Back functions
+
+
+	</script>
+
+</body>
+</html>
